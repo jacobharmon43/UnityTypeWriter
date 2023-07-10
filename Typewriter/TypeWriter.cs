@@ -1,4 +1,7 @@
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+    using UnityEngine.InputSystem;
+#endif
 using System.Collections.Generic;
 
 public class TypeWriter : MonoBehaviour{
@@ -24,12 +27,23 @@ public class TypeWriter : MonoBehaviour{
         List<TypeWriterRequestOptions> requestsToRemove = new List<TypeWriterRequestOptions>();
         foreach(var request in _currentRequests){
 
-            if(Input.GetKeyDown(request.AutoFinishTypingButton)){
-                request.TMPTextObject.text = request.FullString;
-                request.CompletionEvent?.Invoke();
-                requestsToRemove.Add(request);
-                continue;
-            }
+            #if ENABLE_INPUT_SYSTEM
+                Debug.Log("New");
+                if(Keyboard.current[(Key)request.AutoFinishTypingButton].wasPressedThisFrame){
+                    request.TMPTextObject.text = request.FullString;
+                    request.CompletionEvent?.Invoke();
+                    requestsToRemove.Add(request);
+                    continue;
+                }
+            #else
+                Debug.Log("Old");
+                if(Input.GetKeyDown(request.AutoFinishTypingButton)){
+                    request.TMPTextObject.text = request.FullString;
+                    request.CompletionEvent?.Invoke();
+                    requestsToRemove.Add(request);
+                    continue;
+                }
+            #endif
 
             request.currentTimer += Time.deltaTime;
             float charCount = request.FullString.Length;

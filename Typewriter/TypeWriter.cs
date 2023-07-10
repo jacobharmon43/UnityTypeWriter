@@ -28,7 +28,6 @@ public class TypeWriter : MonoBehaviour{
         foreach(var request in _currentRequests){
 
             #if ENABLE_INPUT_SYSTEM
-                Debug.Log("New");
                 if(Keyboard.current[(Key)request.AutoFinishTypingButton].wasPressedThisFrame){
                     request.TMPTextObject.text = request.FullString;
                     request.CompletionEvent?.Invoke();
@@ -36,7 +35,6 @@ public class TypeWriter : MonoBehaviour{
                     continue;
                 }
             #else
-                Debug.Log("Old");
                 if(Input.GetKeyDown(request.AutoFinishTypingButton)){
                     request.TMPTextObject.text = request.FullString;
                     request.CompletionEvent?.Invoke();
